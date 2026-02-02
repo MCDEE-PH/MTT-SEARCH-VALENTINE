@@ -3,50 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MTT</title>
+  <title>MTT - Valentine's Edition</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-15px);
-      }
+    /* Valentine's Theme Overrides */
+    body {
+      background-color: #fff0f3; /* Soft pink fallback */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .animated-img {
-      width: 80px;
-      height: 80px;
-      animation: bounce 3s infinite;
-      margin: 0 10px;
+
+    @keyframes pulse-heart {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
     }
+
+    .valentine-icon {
+      font-size: 50px;
+      display: inline-block;
+      animation: pulse-heart 2s infinite;
+      margin: 20px 0;
+      color: #ff4d6d;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      border: 2px solid #ffb3c1;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(255, 77, 109, 0.2);
+    }
+
+    h1 {
+      color: #c9184a;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      letter-spacing: 5px;
+    }
+
+    .buttons button {
+      background: #ff4d6d;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      margin: 5px;
+    }
+
+    .buttons button:hover {
+      background: #ff758f;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+    }
+
     footer {
       position: fixed;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(255, 77, 109, 0.8); /* Valentine Red/Pink */
       color: white;
       font-size: 12px;
-      padding: 5px 15px;
-      border-radius: 8px;
+      padding: 8px 25px;
+      border-radius: 20px 20px 0 0;
       z-index: 10;
+    }
+
+    .bg-video {
+      filter: sepia(50%) hue-rotate(280deg) brightness(0.8); /* Warms up the skull video to be pinkish */
+    }
+
+    .customize-btn {
+        background: #ffb3c1;
+        color: #c9184a;
+        border-radius: 20px;
+        border: 1px solid #ff4d6d;
     }
   </style>
 </head>
 <body>
-  <!-- 🎃 Skull and Skeleton Animation -->
   <div style="text-align: center; margin-top: 20px;">
-    <img src="Skulls.gif" alt="Grave" class="animated-img">
+    <div class="valentine-icon">❤️</div>
   </div>
 
-  <!-- 🔄 Background Video -->
   <video class="bg-video" autoplay muted loop>
     <source src="Hallowindow_Skull_bounce_HD_720p_Wide.mp4" type="video/mp4">
   </video>
 
-  <!-- 🔊 Background Music -->
   <audio id="bgmusic" loop autoplay>
     <source src="Hallowindow_Skull_bounce_HD_720p_Wide.mp3" type="audio/mpeg">
     Your browser does not support the audio element.
@@ -57,7 +102,8 @@
     <div id="countdown"></div>
 
     <form class="search-box" onsubmit="performSearch(); return false;">
-      <input type="text" id="searchInput" placeholder="Search with Google..." />
+      <input type="text" id="searchInput" placeholder="Search with Love..." 
+             style="border-radius: 20px; padding: 10px; border: 1px solid #ffb3c1;"/>
       <button type="submit">Search</button>
     </form>
 
@@ -71,31 +117,24 @@
     <div class="shortcuts" id="shortcuts"></div>
   </div>
 
-  <!-- ⚙️ Customize Settings -->
   <button class="customize-btn" onclick="toggleSettings()">Customize</button>
 
   <div class="settings-panel" id="settingsPanel">
-    <label><input type="checkbox" onchange="toggleSound(this)"> Background Music</label>
-    <label>Themes (Coming Soon)</label>
+    <label><input type="checkbox" onchange="toggleSound(this)"> Music On/Off</label>
+    <label>Valentine Mode Active</label>
   </div>
 
-  <!-- 🔻 Footer -->
   <footer>
-    Copyright © 2019 BCT. All rights reserved.
+    Copyright © 2019 BCT. Made with ❤️
   </footer>
 
-  <!-- 🧠 Scripts -->
   <script src="script.js"></script>
 
-  <!-- 🎵 Fix for Background Audio Autoplay -->
   <script>
-    // Try to play music once user interacts
     document.addEventListener("click", function () {
       const music = document.getElementById("bgmusic");
       if (music && music.paused) {
-        music.play().catch(e => {
-          console.log("Autoplay blocked:", e);
-        });
+        music.play().catch(e => console.log("Autoplay blocked"));
       }
     }, { once: true });
   </script>
