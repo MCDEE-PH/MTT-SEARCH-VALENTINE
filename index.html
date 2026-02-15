@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MTT | Markedtown Corporation</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Poppins:wght@300;600&family=Noto+Serif+SC:wght@700&display=swap');
+
+    :root {
+      --accent: #d00000;
+      --glow: #ffb700;
+      --glass: rgba(0, 0, 0, 0.45);
+      --btn-glass: rgba(255, 255, 255, 0.12);
+    }
+
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Poppins', sans-serif;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; color: white; background-color: #000; overflow: hidden;
+    }
+
+    .bg-video {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: -2; filter: brightness(0.4);
+    }
+
+    /* WIDGETS */
+    .weather-widget { position: fixed; left: 25px; top: 25px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 12px; width: 110px; z-index: 100; text-align: center; }
+    .calendar-card { position: fixed; right: 25px; top: 25px; width: 65px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 8px; text-align: center; z-index: 100; }
+
+    /* SIDE THEME CONTROLS */
+    .side-controls {
+      position: fixed; right: 25px; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 101;
+    }
+    .master-btn {
+      width: 45px; height: 45px; border-radius: 50%;
+      background: var(--glass); border: 2px solid var(--accent);
+      color: white; cursor: pointer; backdrop-filter: blur(15px);
+      transition: 0.3s; font-size: 1.1rem; box-shadow: 0 0 15px rgba(208, 0, 0, 0.3);
+    }
+    .theme-menu {
+      display: none; flex-direction: column; gap: 8px;
+      background: var(--glass); padding: 10px; border-radius: 15px;
+      backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1);
+    }
+    .v-item {
+      width: 38px; height: 38px; border-radius: 8px; border: none;
+      background: rgba(255,255,255,0.1); color: white; cursor: pointer;
+      transition: 0.2s; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+    }
+    .v-item:hover { background: var(--accent); }
+
+    /* CENTRAL UI STACK */
+    .ui-stack {
+      display: flex; flex-direction: column; align-items: center;
+      width: 100%; max-width: 340px; z-index: 10; gap: 15px;
+    }
+
+    .animated-img { width: 85px; filter: drop-shadow(0 0 20px var(--accent)); animation: bounce 3s infinite ease-in-out; }
+    
+    .header-text { text-align: center; line-height: 1; }
+    .cursive-name { font-family: 'Ma Shan Zheng'; font-size: 3.2rem; text-shadow: 0 0 20px var(--accent); margin: 0; }
+    
+    /* FIXED LENGTH COUNTDOWN */
+    #countdown { 
+      font-size: 0.75rem; background: var(--glass); padding: 7px 0; border-radius: 50px; 
+      border: 1px solid var(--accent); width: 240px; margin-top: 10px;
+      display: block; letter-spacing: 1px; backdrop-filter: blur(10px); 
+      font-variant-numeric: tabular-nums; text-align: center;
+    }
+
+    .search-box { width: 100%; }
+    .search-box input {
+      padding: 12px 20px; width: 100%; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2);
+      background: var(--glass); color: white; text-align: center; outline: none; backdrop-filter: blur(10px); font-size: 0.85rem; box-sizing: border-box;
+    }
+
+    /* FENG SHUI & CORPORATE BUTTONS */
+    .fs-link-btn {
+      display: flex; align-items: center; gap: 8px; text-decoration: none;
+      background: rgba(0, 0, 0, 0.7); padding: 10px; border-radius: 12px;
+      border: 1px solid var(--accent); color: white; font-weight: 600; font-size: 0.7rem;
+      width: 100%; justify-content: center; box-sizing: border-box; transition: 0.3s;
+    }
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+    .main-grid button { 
+        padding: 12px; border-radius: 12px; background: var(--glass); 
+        border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 0.65rem; 
+        font-weight: 600; cursor: pointer; transition: 0.3s; backdrop-filter: blur(8px);
+    }
+    .main-grid button:hover { background: var(--accent); border-color: transparent; }
+
+    /* SMALL APP SHORTCUTS */
+    .shortcuts-grid { display: flex; gap: 12px; justify-content: center; width: 100%; }
+    .small-app-btn { 
+        width: 40px; height: 40px; border-radius: 50%; background: var(--btn-glass); 
+        border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 1.1rem; 
+        display: flex; align-items: center; justify-content: center;
+        text-decoration: none; backdrop-filter: blur(8px); transition: 0.3s;
+    }
+    .small-app-btn:hover { background: var(--accent); transform: scale(1.1); }
+
+    footer { position: fixed; bottom: 12px; font-size: 8px; opacity: 0.5; letter-spacing: 2px; }
+
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  </style>
+</head>
+<body>
+
+  <video class="bg-video" autoplay muted loop playsinline id="mainVideo">
+    <source src="HD.mp4" type="video/mp4">
+  </video>
+  <audio id="audioPlayer" loop><source id="audioSource" src="Intro.mp3" type="audio/mpeg"></audio>
+
+  <div class="side-controls">
+    <button class="master-btn" onclick="toggleMenu()"><i class="fa-solid fa-sliders"></i></button>
+    <div class="theme-menu" id="themeMenu">
+      <button class="v-item" onclick="applyTheme('cny')">🏮</button>
+      <button class="v-item" onclick="applyTheme('spring')">🌸</button>
+      <button class="v-item" onclick="applyTheme('summer')">☀️</button>
+      <button class="v-item" onclick="applyTheme('autumn')">🍂</button>
+      <button class="v-item" onclick="applyTheme('winter')">❄️</button>
+    </div>
+  </div>
+
+  <div class="weather-widget">
+    <div style="font-size:1.1rem; font-weight:600;"><i class="fa-solid fa-cloud-sun" style="color:var(--glow);"></i> 29°C</div>
+    <div style="font-size:0.5rem; letter-spacing:1px; margin-top:4px;">MTT NETWORK</div>
+  </div>
+
+  <div class="calendar-card">
+    <div id="calMonth" style="font-size:0.6rem; color:var(--glow); font-weight:600;">FEB</div>
+    <div id="calDay" style="font-size:1.6rem; font-weight:700;">15</div>
+  </div>
+
+  <div class="ui-stack">
+    <img src="giphy.gif" alt="MTT" class="animated-img">
+
+    <div class="header-text">
+      <h1 class="cursive-name" id="themeTitle">Lunar Year</h1>
+      <div id="countdown">Loading Countdown...</div>
+    </div>
+
+    <div class="search-box">
+      <form onsubmit="performSearch(); return false;">
+        <input type="text" id="searchInput" placeholder="Search the Network..." />
+      </form>
+    </div>
+
+    <a href="https://www.fengshuimall.com/blog/feng-shui-forecast-2026" target="_blank" class="fs-link-btn">
+      <i class="fa-solid fa-dragon" style="color:var(--glow);"></i> FENG SHUI 2026 FORECAST
+    </a>
+
+    <div class="main-grid">
+      <button onclick="window.location.href='https://bosscorporationservices.on.drv.tw/BOSSCORP/PORTFOLIO/Index.html'">MTT SERVICES</button>
+    <button onclick="window.location.href='https://sweetmarbles.nicepage.io/Home.html'">OFFICIAL SHOP</button>
+    <button onclick="window.location.href='https://paulasrock.github.io/ONLINE-SABONG-LOG-IN-PAGE/'">LATEST BLOGS</button>
+    <button onclick="window.location.href='https://yantoyasabo27.github.io/MTT-FINANCING/'">FINANCE TOOLS</button>
+    </div>
+
+    <div class="shortcuts-grid">
+      <a href="https://youtube.com" target="_blank" class="small-app-btn"><i class="fa-brands fa-youtube"></i></a>
+      <a href="https://facebook.com" target="_blank" class="small-app-btn"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://docs.google.com/spreadsheets" target="_blank" class="small-app-btn"><i class="fa-solid fa-table-cells"></i></a>
+      <a href="https://meet.google.com" target="_blank" class="small-app-btn"><i class="fa-solid fa-video"></i></a>
+      <a href="https://mail.google.com" target="_blank" class="small-app-btn"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://gemini.google.com" target="_blank" class="small-app-btn"><i class="fa-solid fa-wand-magic-sparkles"></i></a>
+    </div>
+  </div>
+
+  <footer>MTT CORPORATION © 2026</footer>
+
+  <script>
+    const themes = {
+      cny: { video: 'CNY.mp4', music: 'Dragon Dance.mp3', title: 'Lunar Year', accent: '#d00000' },
+      spring: { video: 'Spring.mp4', music: 'Spring.mp3', title: 'Spring', accent: '#ff85a1' },
+      summer: { video: 'Summer.mp4', music: 'Drum.mp3', title: 'Summer', accent: '#ffb700' },
+      autumn: { video: 'autumn.mp4', music: 'Autumn.mp3', title: 'Autumn', accent: '#e36414' },
+      winter: { video: 'black.mp4', music: 'Winter.mp3', title: 'Winter', accent: '#00b4d8' }
+    };
+
+    let currentTheme = themes.cny;
+    const audio = document.getElementById('audioPlayer');
+
+    function toggleMenu() {
+      const m = document.getElementById('themeMenu');
+      m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function applyTheme(key) {
+      currentTheme = themes[key];
+      document.getElementById('mainVideo').src = currentTheme.video;
+      audio.src = currentTheme.music;
+      audio.play().catch(() => {});
+      document.documentElement.style.setProperty('--accent', currentTheme.accent);
+      document.getElementById('themeTitle').innerText = currentTheme.title;
+      toggleMenu();
+    }
+
+    function updateCountdown() {
+      const target = new Date("February 17, 2026 00:00:00").getTime();
+      const now = new Date().getTime();
+      const diff = target - now;
+      
+      if (diff <= 0) {
+        document.getElementById("countdown").innerText = "HAPPY FIRE HORSE YEAR!";
+        return;
+      }
+
+      const d = Math.floor(diff / 86400000);
+      const h = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+      const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+      const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+      
+      document.getElementById("countdown").innerText = `${d}d : ${h}h : ${m}m : ${s}s`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    function performSearch() {
+      const q = document.getElementById('searchInput').value;
+      if(q) window.location.href = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+    }
+
+    document.addEventListener("click", () => { if(audio.paused) audio.play(); }, { once: true });
+  </script>
+</body>
+</html>
